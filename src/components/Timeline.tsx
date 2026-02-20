@@ -4,22 +4,28 @@ import { useRef, useEffect } from 'react'
 import { Book } from '@/types/book'
 import { ERA_BANDS, TIMELINE_START_YEAR, TIMELINE_END_YEAR, ZOOM_LEVELS } from '@/lib/constants'
 import { yearToPixel, formatYear, timelineWidth } from '@/lib/timeline'
+import { stackBooks } from '@/lib/stackBooks'
+import { BookCard } from './BookCard'
 
 interface Props {
   books: Book[]
   zoom: 'century' | 'decade'
   scrollRef?: React.RefObject<HTMLDivElement | null>
+  onBookClick?: (book: Book) => void
 }
 
 const AXIS_HEIGHT = 48
 const TRACK_HEIGHT = 500
 const TOTAL_HEIGHT = AXIS_HEIGHT + TRACK_HEIGHT
 
-export function Timeline({ books, zoom, scrollRef: externalScrollRef }: Props) {
+const ROW_HEIGHT = 136 // CARD_HEIGHT (120) + gap (16)
+
+export function Timeline({ books, zoom, scrollRef: externalScrollRef, onBookClick }: Props) {
   const internalRef = useRef<HTMLDivElement>(null)
   const scrollRef = externalScrollRef ?? internalRef
   const pxPerYear = ZOOM_LEVELS[zoom]
   const width = timelineWidth(pxPerYear)
+  const stacked = stackBooks(books, pxPerYear)
 
   // Scroll to present on first render
   useEffect(() => {
@@ -55,9 +61,17 @@ export function Timeline({ books, zoom, scrollRef: externalScrollRef }: Props) {
         {/* Year axis */}
         <YearAxis pxPerYear={pxPerYear} width={width} />
 
-        {/* Book cards -- wired in Task 10 */}
+        {/* Book cards */}
         <div className="absolute" style={{ top: AXIS_HEIGHT, left: 0, right: 0, bottom: 0 }}>
-          {/* Book cards rendered here in Task 10 */}
+          {stacked.map(({ book, x, width: cardWidth, row }) => (
+            <BookCard
+              key={book.id}
+              book={book}
+              width={cardWidth}
+              onClick={onBookClick ?? (() => {})}
+              style={{ left: x, top: row * ROW_HEIGHT }}
+            />
+          ))}
         </div>
       </div>
     </div>
