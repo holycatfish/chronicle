@@ -7,6 +7,7 @@ import { ImportModal } from '@/components/ImportModal'
 import { Timeline } from '@/components/Timeline'
 import { BookDetailPanel } from '@/components/BookDetailPanel'
 import { Sidebar } from '@/components/Sidebar'
+import { TimelineControls } from '@/components/TimelineControls'
 import { Book } from '@/types/book'
 
 export default function Home() {
@@ -77,6 +78,12 @@ export default function Home() {
           startInEditMode={selectedBookEditMode}
         />
       )}
+
+      <TimelineControls
+        zoom={zoom}
+        onZoomChange={setZoom}
+        scrollRef={timelineScrollRef}
+      />
 
       {showAddModal && (
         <AddBookModal
