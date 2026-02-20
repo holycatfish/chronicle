@@ -5,17 +5,29 @@ import { useLibrary } from '@/hooks/useLibrary'
 import { AddBookModal } from '@/components/AddBookModal'
 import { ImportModal } from '@/components/ImportModal'
 import { Timeline } from '@/components/Timeline'
+import { BookDetailPanel } from '@/components/BookDetailPanel'
 import { Book } from '@/types/book'
 
 export default function Home() {
-  const { books, addBook, addBooks } = useLibrary()
+  const { books, addBook, addBooks, updateBook } = useLibrary()
   const [showAddModal, setShowAddModal] = useState(false)
   const [showImportModal, setShowImportModal] = useState(false)
   const [zoom, setZoom] = useState<'century' | 'decade'>('century')
+  const [selectedBook, setSelectedBook] = useState<Book | null>(null)
   const timelineScrollRef = useRef<HTMLDivElement>(null)
 
   function handleImport(imported: Book[]) {
     addBooks(imported)
+  }
+
+  function handleBookClick(book: Book) {
+    setSelectedBook(book)
+  }
+
+  function handleBookUpdate(id: string, changes: Partial<Book>) {
+    updateBook(id, changes)
+    // Reflect the update in the detail panel immediately
+    setSelectedBook(prev => prev && prev.id === id ? { ...prev, ...changes } : prev)
   }
 
   return (
@@ -43,8 +55,17 @@ export default function Home() {
           books={books}
           zoom={zoom}
           scrollRef={timelineScrollRef}
+          onBookClick={handleBookClick}
         />
       </div>
+
+      {selectedBook && (
+        <BookDetailPanel
+          book={selectedBook}
+          onClose={() => setSelectedBook(null)}
+          onUpdate={handleBookUpdate}
+        />
+      )}
 
       {showAddModal && (
         <AddBookModal
