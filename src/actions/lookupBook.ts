@@ -12,7 +12,8 @@ export async function lookupBook(params: LookupParams): Promise<BookLookupResult
     if (isbn) {
       return await lookupByIsbn(isbn)
     }
-    return await lookupByTitle(params.title, params.author)
+    // TypeScript doesn't narrow `never?` unions through if-returns, so assert here
+    return await lookupByTitle(params.title!, params.author)
   } catch {
     return null
   }
