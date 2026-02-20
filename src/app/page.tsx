@@ -1,15 +1,18 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import { useLibrary } from '@/hooks/useLibrary'
 import { AddBookModal } from '@/components/AddBookModal'
 import { ImportModal } from '@/components/ImportModal'
+import { Timeline } from '@/components/Timeline'
 import { Book } from '@/types/book'
 
 export default function Home() {
   const { books, addBook, addBooks } = useLibrary()
   const [showAddModal, setShowAddModal] = useState(false)
   const [showImportModal, setShowImportModal] = useState(false)
+  const [zoom, setZoom] = useState<'century' | 'decade'>('century')
+  const timelineScrollRef = useRef<HTMLDivElement>(null)
 
   function handleImport(imported: Book[]) {
     addBooks(imported)
@@ -35,9 +38,12 @@ export default function Home() {
         </div>
       </nav>
 
-      <div className="pt-14 p-6">
-        <p className="text-gray-500 text-sm">{books.length} books in library</p>
-        {/* Timeline added in Task 9 */}
+      <div className="pt-14">
+        <Timeline
+          books={books}
+          zoom={zoom}
+          scrollRef={timelineScrollRef}
+        />
       </div>
 
       {showAddModal && (
