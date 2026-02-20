@@ -61,13 +61,45 @@ export default function Home() {
 
       <Sidebar books={books} onAssignEra={handleAssignEra} />
 
-      <div className="pt-14">
-        <Timeline
-          books={books}
-          zoom={zoom}
-          scrollRef={timelineScrollRef}
-          onBookClick={handleBookClick}
-        />
+      {/* Shift content right when sidebar is visible, left when detail panel is open */}
+      <div
+        className="pt-14 transition-all"
+        style={{
+          marginLeft: books.some(b => !b.hasHistoricalEra) ? '14rem' : 0,
+          marginRight: selectedBook ? '20rem' : 0,
+        }}
+      >
+        {books.length === 0 ? (
+          <div className="flex flex-col items-center justify-center min-h-[calc(100vh-3.5rem)] text-center p-8">
+            <h2 className="text-xl font-semibold text-gray-900 mb-2">
+              Your history starts here
+            </h2>
+            <p className="text-gray-500 text-sm mb-6 max-w-sm">
+              Add non-fiction books to see where in history you have been as a reader.
+            </p>
+            <div className="flex gap-3">
+              <button
+                onClick={() => setShowAddModal(true)}
+                className="px-4 py-2 bg-gray-900 text-white text-sm rounded-lg hover:bg-gray-700"
+              >
+                Add a book
+              </button>
+              <button
+                onClick={() => setShowImportModal(true)}
+                className="px-4 py-2 border text-sm rounded-lg hover:bg-gray-50"
+              >
+                Import from Goodreads
+              </button>
+            </div>
+          </div>
+        ) : (
+          <Timeline
+            books={books}
+            zoom={zoom}
+            scrollRef={timelineScrollRef}
+            onBookClick={handleBookClick}
+          />
+        )}
       </div>
 
       {selectedBook && (
