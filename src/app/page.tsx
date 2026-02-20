@@ -6,6 +6,7 @@ import { AddBookModal } from '@/components/AddBookModal'
 import { ImportModal } from '@/components/ImportModal'
 import { Timeline } from '@/components/Timeline'
 import { BookDetailPanel } from '@/components/BookDetailPanel'
+import { Sidebar } from '@/components/Sidebar'
 import { Book } from '@/types/book'
 
 export default function Home() {
@@ -14,6 +15,7 @@ export default function Home() {
   const [showImportModal, setShowImportModal] = useState(false)
   const [zoom, setZoom] = useState<'century' | 'decade'>('century')
   const [selectedBook, setSelectedBook] = useState<Book | null>(null)
+  const [selectedBookEditMode, setSelectedBookEditMode] = useState(false)
   const timelineScrollRef = useRef<HTMLDivElement>(null)
 
   function handleImport(imported: Book[]) {
@@ -22,6 +24,12 @@ export default function Home() {
 
   function handleBookClick(book: Book) {
     setSelectedBook(book)
+    setSelectedBookEditMode(false)
+  }
+
+  function handleAssignEra(book: Book) {
+    setSelectedBook(book)
+    setSelectedBookEditMode(true)
   }
 
   function handleBookUpdate(id: string, changes: Partial<Book>) {
@@ -50,6 +58,8 @@ export default function Home() {
         </div>
       </nav>
 
+      <Sidebar books={books} onAssignEra={handleAssignEra} />
+
       <div className="pt-14">
         <Timeline
           books={books}
@@ -64,6 +74,7 @@ export default function Home() {
           book={selectedBook}
           onClose={() => setSelectedBook(null)}
           onUpdate={handleBookUpdate}
+          startInEditMode={selectedBookEditMode}
         />
       )}
 

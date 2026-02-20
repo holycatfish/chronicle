@@ -9,10 +9,11 @@ interface Props {
   book: Book
   onClose: () => void
   onUpdate: (id: string, changes: Partial<Book>) => void
+  startInEditMode?: boolean
 }
 
-export function BookDetailPanel({ book, onClose, onUpdate }: Props) {
-  const [editingEra, setEditingEra] = useState(false)
+export function BookDetailPanel({ book, onClose, onUpdate, startInEditMode = false }: Props) {
+  const [editingEra, setEditingEra] = useState(startInEditMode)
   const [startYear, setStartYear] = useState(String(book.startYear ?? ''))
   const [endYear, setEndYear] = useState(String(book.endYear ?? ''))
   const [eraLabel, setEraLabel] = useState(book.eraLabel ?? '')
